@@ -33,16 +33,28 @@ export const PuzzleLevel: React.FC<PuzzleLevelProps> = ({
     <View style={styles.container}>
       <View style={styles.header}>
         <View style={styles.headerLeft}>
-          <Pressable onPress={onGoHome} style={styles.iconButton}>
+          <Pressable 
+            onPress={onGoHome} 
+            style={styles.iconButton}
+            accessibilityLabel="Go to home screen"
+          >
             <MaterialCommunityIcons name="home" size={24} color="#fff" />
           </Pressable>
           <Text style={styles.levelText}>Level {level}</Text>
         </View>
         <View style={styles.headerRight}>
-          <Pressable onPress={handleHintPress} style={styles.iconButton}>
+          <Pressable 
+            onPress={handleHintPress} 
+            style={styles.iconButton}
+            accessibilityLabel="Show hint"
+          >
             <MaterialCommunityIcons name="lightbulb-outline" size={24} color="#FFD700" />
           </Pressable>
-          <Pressable onPress={onSkip} style={styles.iconButton}>
+          <Pressable 
+            onPress={onSkip} 
+            style={styles.iconButton}
+            accessibilityLabel="Skip level"
+          >
             <MaterialCommunityIcons name="skip-next" size={24} color="#fff" />
           </Pressable>
         </View>

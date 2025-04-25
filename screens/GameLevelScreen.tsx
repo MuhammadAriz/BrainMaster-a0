@@ -43,16 +43,19 @@ export default function GameLevelScreen() {
     }
   };
 
-  if (!levelData) return null;
-
-  return (
-    <View style={styles.container}>      <PuzzleLevel
+  if (!levelData) return null;  return (
+    <View style={styles.container}>
+      <PuzzleLevel
         level={levelId}
         question={levelData.question}
         hint={levelData.hint}
-        onComplete={() => handleLevelComplete(3)} // Default to 3 stars for now
-        onSkip={() => navigation.navigate('LevelSelect')}
-        onGoHome={() => navigation.navigate('Home')}
+        onComplete={() => handleLevelComplete(3)}
+        onSkip={() => {
+          navigation.navigate('LevelSelect');
+        }}
+        onGoHome={() => {
+          navigation.navigate('Home');
+        }}
       >
         {React.createElement(levelData.component, {
           onComplete: () => handleLevelComplete(3)
