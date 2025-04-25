@@ -21,6 +21,8 @@ export const PuzzleLevel: React.FC<PuzzleLevelProps> = ({
   hint,
   isComplete = false,
   onComplete,
+  onSkip,
+  onGoHome,
   children
 }) => {
   const [showHint, setShowHint] = useState(false);

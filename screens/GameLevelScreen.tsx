@@ -44,18 +44,13 @@ export default function GameLevelScreen() {
   };
 
   if (!levelData) return null;  return (
-    <View style={styles.container}>
-      <PuzzleLevel
+    <View style={styles.container}>      <PuzzleLevel
         level={levelId}
         question={levelData.question}
         hint={levelData.hint}
         onComplete={() => handleLevelComplete(3)}
-        onSkip={() => {
-          navigation.navigate('LevelSelect');
-        }}
-        onGoHome={() => {
-          navigation.navigate('Home');
-        }}
+        onSkip={() => navigation.navigate('LevelSelect')}
+        onGoHome={() => navigation.navigate('Home')}
       >
         {React.createElement(levelData.component, {
           onComplete: () => handleLevelComplete(3)
