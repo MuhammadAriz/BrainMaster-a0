@@ -9,7 +9,9 @@ interface PuzzleLevelProps {
   question: string;
   hint: string;
   isComplete?: boolean;
-  onComplete?: () => void;
+  onComplete: () => void;
+  onSkip: () => void;
+  onGoHome: () => void;
   children: React.ReactNode;
 }
 
@@ -27,15 +29,23 @@ export const PuzzleLevel: React.FC<PuzzleLevelProps> = ({
   const handleHintPress = () => {
     setShowHint(true);
     setHintUsed(true);
-  };
-
-  return (
+  };  return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.levelText}>Level {level}</Text>
-        <Pressable onPress={handleHintPress} style={styles.hintButton}>
-          <MaterialCommunityIcons name="lightbulb-outline" size={24} color="#FFD700" />
-        </Pressable>
+        <View style={styles.headerLeft}>
+          <Pressable onPress={onGoHome} style={styles.iconButton}>
+            <MaterialCommunityIcons name="home" size={24} color="#fff" />
+          </Pressable>
+          <Text style={styles.levelText}>Level {level}</Text>
+        </View>
+        <View style={styles.headerRight}>
+          <Pressable onPress={handleHintPress} style={styles.iconButton}>
+            <MaterialCommunityIcons name="lightbulb-outline" size={24} color="#FFD700" />
+          </Pressable>
+          <Pressable onPress={onSkip} style={styles.iconButton}>
+            <MaterialCommunityIcons name="skip-next" size={24} color="#fff" />
+          </Pressable>
+        </View>
       </View>
       
       <Text style={styles.question}>{question}</Text>
@@ -79,12 +89,24 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#1a1a1a',
     padding: 20,
-  },
-  header: {
+  },  header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: 20,
+  },
+  headerLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 15,
+  },
+  headerRight: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 15,
+  },
+  iconButton: {
+    padding: 8,
   },
   levelText: {
     fontSize: 24,

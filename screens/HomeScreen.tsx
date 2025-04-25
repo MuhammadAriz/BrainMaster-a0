@@ -1,55 +1,32 @@
-import React, { useState } from 'react';
-import { View, StyleSheet, ScrollView } from 'react-native';
-import { PuzzleLevel } from '../components/PuzzleLevel';
-import { LightBulbPuzzle } from '../components/puzzles/LightBulbPuzzle';
-import { CountingPuzzle } from '../components/puzzles/CountingPuzzle';
-import { WordPuzzle } from '../components/puzzles/WordPuzzle';
+import React from 'react';
+import { View, Text, StyleSheet, Pressable, Image } from 'react-native';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native';
+import Animated, { FadeIn } from 'react-native-reanimated';
 
 export default function HomeScreen() {
-  const [completedLevels, setCompletedLevels] = useState<number[]>([]);
-
-  const handleLevelComplete = (level: number) => {
-    if (!completedLevels.includes(level)) {
-      setCompletedLevels([...completedLevels, level]);
-    }
-  };
+  const navigation = useNavigation();
 
   return (
-    <ScrollView style={styles.container}>
-      <PuzzleLevel
-        level={1}
-        question="Turn on the light! But remember... sometimes the obvious solution isn't the right one."
-        hint="What if the bulb isn't the only thing you can interact with?"
-        isComplete={completedLevels.includes(1)}
-        onComplete={() => handleLevelComplete(1)}
-      >
-        <LightBulbPuzzle onComplete={() => handleLevelComplete(1)} />
-      </PuzzleLevel>
+    <View style={styles.container}>
+      <Animated.View entering={FadeIn.duration(1000)} style={styles.content}>
+        <Text style={styles.title}>Brain Master</Text>
+        <Text style={styles.subtitle}>Challenge Your Mind</Text>
+        
+        <Image 
+          source={{ uri: 'https://api.a0.dev/assets/image?text=colorful%20brain%20illustration%20modern%20minimal&aspect=1:1' }}
+          style={styles.logo}
+        />
 
-      {completedLevels.includes(1) && (
-        <PuzzleLevel
-          level={2}
-          question="How many triangles do you see? Tap the correct number!"
-          hint="Look carefully! Some triangles might be formed by smaller ones."
-          isComplete={completedLevels.includes(2)}
-          onComplete={() => handleLevelComplete(2)}
+        <Pressable 
+          style={styles.playButton}
+          onPress={() => navigation.navigate('LevelSelect')}
         >
-          <CountingPuzzle onComplete={() => handleLevelComplete(2)} />
-        </PuzzleLevel>
-      )}
-
-      {completedLevels.includes(2) && (
-        <PuzzleLevel
-          level={3}
-          question="Make the word 'STAR' by moving only ONE letter"
-          hint="Think about how letters can be rotated..."
-          isComplete={completedLevels.includes(3)}
-          onComplete={() => handleLevelComplete(3)}
-        >
-          <WordPuzzle onComplete={() => handleLevelComplete(3)} />
-        </PuzzleLevel>
-      )}
-    </ScrollView>
+          <Text style={styles.playButtonText}>Play</Text>
+          <MaterialCommunityIcons name="play" size={24} color="#fff" />
+        </Pressable>
+      </Animated.View>
+    </View>
   );
 }
 
@@ -57,5 +34,42 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#1a1a1a',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  content: {
+    alignItems: 'center',
+    width: '100%',
+  },
+  title: {
+    fontSize: 40,
+    fontWeight: 'bold',
+    color: '#fff',
+    marginBottom: 10,
+  },
+  subtitle: {
+    fontSize: 18,
+    color: '#888',
+    marginBottom: 40,
+  },
+  logo: {
+    width: 200,
+    height: 200,
+    marginBottom: 40,
+    borderRadius: 100,
+  },
+  playButton: {
+    flexDirection: 'row',
+    backgroundColor: '#4CAF50',
+    paddingHorizontal: 40,
+    paddingVertical: 15,
+    borderRadius: 25,
+    alignItems: 'center',
+    gap: 10,
+  },
+  playButtonText: {
+    color: '#fff',
+    fontSize: 24,
+    fontWeight: 'bold',
   },
 });
