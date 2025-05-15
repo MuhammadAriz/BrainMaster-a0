@@ -24,13 +24,29 @@ export const PuzzleLevel: React.FC<PuzzleLevelProps> = ({
   onSkip,
   onGoHome,
   children
-}) => {
+}) => {  const [bulbs, setBulbs] = useState(5); // Start with 5 bulbs
   const [showHint, setShowHint] = useState(false);
+  const [currentHintIndex, setCurrentHintIndex] = useState(0);
   const [hintUsed, setHintUsed] = useState(false);
 
   const handleHintPress = () => {
-    setShowHint(true);
-    setHintUsed(true);
+    if (bulbs > 0) {
+      setBulbs(prev => prev - 1);
+      setShowHint(true);
+      setHintUsed(true);
+      setCurrentHintIndex(prev => prev + 1);
+    } else {
+      toast.error('No bulbs left! Complete more levels to earn bulbs.');
+    }
+  };
+
+  const handleSkip = () => {
+    if (bulbs >= 3) {
+      setBulbs(prev => prev - 3);
+      onSkip();
+    } else {
+      toast.error('Need 3 bulbs to skip! Complete more levels to earn bulbs.');
+    }
   };  return (
     <View style={styles.container}>
       <View style={styles.header}>

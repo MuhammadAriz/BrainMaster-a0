@@ -17,45 +17,104 @@ const puzzleTypes = {
 const generateUniqueLevels = () => {
   const levels: Record<number, any> = {};
   
-  // Example unique levels (we'll create more variations)
-  const levelTemplates = [
-    {
-      type: 'Logic',
-      question: "Turn on the light! But remember... sometimes the obvious solution isn't the right one.",
-      hint: "Try tapping the bulb multiple times to warm it up!",
-      component: puzzleTypes.LIGHT
-    },
-    {
-      type: 'Visual',
-      question: "How many triangles can you find? Count carefully!",
-      hint: "Don't forget to count the triangles formed by smaller ones!",
-      component: puzzleTypes.COUNT
-    },
-    {
-      type: 'Word',
-      question: "Transform 'RATS' into 'STAR' by rotating only one letter!",
-      hint: "One of these letters looks similar when rotated...",
-      component: puzzleTypes.WORD
-    },
-    {
-      type: 'Pattern',
-      question: "Recreate the sequence shown briefly at the start",
-      hint: "Pay attention to the order of highlighted cells",
-      component: puzzleTypes.PATTERN
-    },
-    {
-      type: 'Color',
-      question: "Create the rainbow sequence using the given colors",
-      hint: "Think about the natural order of rainbow colors",
-      component: puzzleTypes.COLOR
-    },
-    {
-      type: 'Math',
-      question: "Use the numbers and operators to reach the target",
-      hint: "Try different combinations of operations",
-      component: puzzleTypes.MATH
+  // Categories of puzzles with unique challenges
+  const puzzleCategories = {
+    MATH: [
+      {
+        question: "Find the missing number in the sequence: 2, 6, 12, 20, ?",
+        hints: [
+          "Look at how much the difference increases each time",
+          "The difference increases by 2 each time: 4, 6, 8...",
+          "Add 10 to 20"
+        ],
+        answer: 30,
+        component: puzzleTypes.MATH
+      },
+      {
+        question: "Solve: If 5 cats catch 5 mice in 5 minutes, how many cats catch 100 mice in 100 minutes?",
+        hints: [
+          "Start by finding how many mice one cat catches in 5 minutes",
+          "Then calculate how many mice one cat catches in 100 minutes",
+          "Finally, solve for the number of cats needed"
+        ],
+        answer: 5,
+        component: puzzleTypes.MATH
+      }
+    ],
+    PHYSICS: [
+      {
+        question: "A ball is dropped from 100m. If gravity is 10 m/s², how long will it take to reach the ground?",
+        hints: [
+          "Use the formula: distance = (1/2) × gravity × time²",
+          "Rearrange the formula to solve for time",
+          "Square root of (2 × distance / gravity)"
+        ],
+        answer: "4.47 seconds",
+        component: puzzleTypes.MATH
+      }
+    ],
+    LOGIC: [
+      {
+        question: "Arrange 6 matchsticks to make 4 equilateral triangles",
+        hints: [
+          "Think in three dimensions",
+          "Consider making a pyramid",
+          "Three matchsticks at the base, three meeting at a point above"
+        ],
+        component: puzzleTypes.PATTERN
+      }
+    ],
+    COLOR: [
+      {
+        question: "Mix primary colors to create secondary colors. What makes purple?",
+        hints: [
+          "Primary colors are Red, Blue, and Yellow",
+          "You need two primary colors",
+          "Red + Blue = Purple"
+        ],
+        component: puzzleTypes.COLOR
+      }
+    ],
+    MEMORY: [
+      {
+        question: "Remember the sequence of symbols: ★ ◆ ● ▲ ■",
+        hints: [
+          "Group the symbols into pairs",
+          "Create a story with the shapes",
+          "Star-Diamond, Circle-Triangle, Square"
+        ],
+        component: puzzleTypes.PATTERN
+      }
+    ],
+    GENERAL_KNOWLEDGE: [
+      {
+        question: "Arrange these planets in order from closest to farthest from the Sun",
+        hints: [
+          "Mercury is closest to the Sun",
+          "Earth is the third planet",
+          "Mars is between Earth and Jupiter"
+        ],
+        component: puzzleTypes.PATTERN
+      }
+    ]
+  };
+
+  // Generate 100 unique levels
+  let levelCount = 1;
+  for (const category in puzzleCategories) {
+    const puzzles = puzzleCategories[category];
+    for (const puzzle of puzzles) {
+      if (levelCount <= 100) {
+        levels[levelCount] = {
+          ...puzzle,
+          type: category,
+          difficulty: levelCount <= 33 ? 'easy' : 
+                     levelCount <= 66 ? 'medium' : 'hard'
+        };
+        levelCount++;
+      }
     }
-  ];
+  }
 
   // Generate 100 unique levels with variations
   for (let i = 1; i <= 100; i++) {
