@@ -24,10 +24,21 @@ export const PuzzleLevel: React.FC<PuzzleLevelProps> = ({
   onSkip,
   onGoHome,
   children
-}) => {  const [bulbs, setBulbs] = useState(5); // Start with 5 bulbs
+}) => {  const [bulbs, setBulbs] = useState(5); // Start with 5 bulbs  const [bulbs, setBulbs] = useState(5);
   const [showHint, setShowHint] = useState(false);
   const [currentHintIndex, setCurrentHintIndex] = useState(0);
   const [hintUsed, setHintUsed] = useState(false);
+
+  useEffect(() => {
+    AsyncStorage.getItem('bulbs').then(stored => {
+      if (stored) setBulbs(parseInt(stored));
+    });
+  }, []);
+
+  const saveBulbs = async (count: number) => {
+    await AsyncStorage.setItem('bulbs', count.toString());
+    setBulbs(count);
+  };
 
   const handleHintPress = () => {
     if (bulbs > 0) {

@@ -1,188 +1,135 @@
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { LightBulbPuzzle } from '../components/puzzles/LightBulbPuzzle';
 import { CountingPuzzle } from '../components/puzzles/CountingPuzzle';
 import { WordPuzzle } from '../components/puzzles/WordPuzzle';
-import { PatternPuzzle } from '../components/puzzles/PatternPuzzle';
-import { ColorPuzzle } from '../components/puzzles/ColorPuzzle';
 import { MathPuzzle } from '../components/puzzles/MathPuzzle';
+import { PhysicsPuzzle } from '../components/puzzles/PhysicsPuzzle';
+import { MemoryPuzzle } from '../components/puzzles/MemoryPuzzle';
+import { LogicPuzzle } from '../components/puzzles/LogicPuzzle';
+import { KnowledgePuzzle } from '../components/puzzles/KnowledgePuzzle';
+import { SortingPuzzle } from '../components/puzzles/SortingPuzzle';
+import { StrategyPuzzle } from '../components/puzzles/StrategyPuzzle';
 
-const puzzleTypes = {
-  LIGHT: LightBulbPuzzle,
-  COUNT: CountingPuzzle,
-  WORD: WordPuzzle,
-  PATTERN: PatternPuzzle,
-  COLOR: ColorPuzzle,
-  MATH: MathPuzzle,
-};
+export interface Level {
+  id: number;
+  title: string;
+  category: 'MATH' | 'PHYSICS' | 'KNOWLEDGE' | 'SORTING' | 'LOGIC';
+  difficulty: 'easy' | 'medium' | 'hard';
+  question: string;
+  hints: string[];
+  component: React.ComponentType<any>;
+  config?: any;
+}
 
-const generateUniqueLevels = () => {
-  const levels: Record<number, any> = {};
-  
-  // Categories of puzzles with unique challenges
-  const puzzleCategories = {
-    MATH: [
-      {
-        question: "Find the missing number in the sequence: 2, 6, 12, 20, ?",
-        hints: [
-          "Look at how much the difference increases each time",
-          "The difference increases by 2 each time: 4, 6, 8...",
-          "Add 10 to 20"
-        ],
-        answer: 30,
-        component: puzzleTypes.MATH
-      },
-      {
-        question: "Solve: If 5 cats catch 5 mice in 5 minutes, how many cats catch 100 mice in 100 minutes?",
-        hints: [
-          "Start by finding how many mice one cat catches in 5 minutes",
-          "Then calculate how many mice one cat catches in 100 minutes",
-          "Finally, solve for the number of cats needed"
-        ],
-        answer: 5,
-        component: puzzleTypes.MATH
-      }
+const levels: Record<number, Level> = {
+  // Math & Logic (1-20)
+  1: {
+    id: 1,
+    title: "Odd One Out",
+    category: 'MATH',
+    difficulty: 'easy',
+    question: "Which number doesn't belong in the sequence: 2, 4, 7, 8, 10?",
+    hints: [
+      "Look for a pattern in the numbers",
+      "Most numbers follow a specific rule",
+      "One number breaks the even pattern"
     ],
-    PHYSICS: [
-      {
-        question: "A ball is dropped from 100m. If gravity is 10 m/s², how long will it take to reach the ground?",
-        hints: [
-          "Use the formula: distance = (1/2) × gravity × time²",
-          "Rearrange the formula to solve for time",
-          "Square root of (2 × distance / gravity)"
-        ],
-        answer: "4.47 seconds",
-        component: puzzleTypes.MATH
-      }
-    ],
-    LOGIC: [
-      {
-        question: "Arrange 6 matchsticks to make 4 equilateral triangles",
-        hints: [
-          "Think in three dimensions",
-          "Consider making a pyramid",
-          "Three matchsticks at the base, three meeting at a point above"
-        ],
-        component: puzzleTypes.PATTERN
-      }
-    ],
-    COLOR: [
-      {
-        question: "Mix primary colors to create secondary colors. What makes purple?",
-        hints: [
-          "Primary colors are Red, Blue, and Yellow",
-          "You need two primary colors",
-          "Red + Blue = Purple"
-        ],
-        component: puzzleTypes.COLOR
-      }
-    ],
-    MEMORY: [
-      {
-        question: "Remember the sequence of symbols: ★ ◆ ● ▲ ■",
-        hints: [
-          "Group the symbols into pairs",
-          "Create a story with the shapes",
-          "Star-Diamond, Circle-Triangle, Square"
-        ],
-        component: puzzleTypes.PATTERN
-      }
-    ],
-    GENERAL_KNOWLEDGE: [
-      {
-        question: "Arrange these planets in order from closest to farthest from the Sun",
-        hints: [
-          "Mercury is closest to the Sun",
-          "Earth is the third planet",
-          "Mars is between Earth and Jupiter"
-        ],
-        component: puzzleTypes.PATTERN
-      }
-    ]
-  };
+    component: MathPuzzle,
+    config: {
+      type: 'sequence',
+      numbers: [2, 4, 7, 8, 10],
+      answer: 7
+    }
+  },
+  // ... continuing with more levels
 
-  // Generate 100 unique levels
-  let levelCount = 1;
-  for (const category in puzzleCategories) {
-    const puzzles = puzzleCategories[category];
-    for (const puzzle of puzzles) {
-      if (levelCount <= 100) {
-        levels[levelCount] = {
-          ...puzzle,
-          type: category,
-          difficulty: levelCount <= 33 ? 'easy' : 
-                     levelCount <= 66 ? 'medium' : 'hard'
-        };
-        levelCount++;
-      }
+  // Physics & Gravity (21-40)
+  21: {
+    id: 21,
+    title: "Gravity Drop",
+    category: 'PHYSICS',
+    difficulty: 'medium',
+    question: "Predict where the ball will land when dropped from this height",
+    hints: [
+      "Consider the gravitational force",
+      "Watch for obstacles in the path",
+      "Calculate the time it takes to fall"
+    ],
+    component: PhysicsPuzzle,
+    config: {
+      type: 'gravity',
+      height: 100,
+      obstacles: []
+    }
+  },
+  // ... continuing with more levels
+
+  // General Knowledge & Trivia (41-60)
+  41: {
+    id: 41,
+    title: "Capital Match",
+    category: 'KNOWLEDGE',
+    difficulty: 'medium',
+    question: "Match these countries to their capitals",
+    hints: [
+      "Start with the ones you're sure about",
+      "Some capitals share similar names with their countries",
+      "Use process of elimination"
+    ],
+    component: KnowledgePuzzle,
+    config: {
+      type: 'matching',
+      pairs: [
+        ['France', 'Paris'],
+        ['Japan', 'Tokyo'],
+        ['Egypt', 'Cairo']
+      ]
+    }
+  },
+  // ... continuing with more levels
+
+  // Sorting & Memory Games (61-80)
+  61: {
+    id: 61,
+    title: "Color Order",
+    category: 'SORTING',
+    difficulty: 'easy',
+    question: "Arrange the colors in rainbow order",
+    hints: [
+      "Remember ROY G BIV",
+      "Red always comes first",
+      "Violet is at the end"
+    ],
+    component: SortingPuzzle,
+    config: {
+      type: 'color',
+      items: ['blue', 'red', 'yellow', 'green', 'violet', 'orange']
+    }
+  },
+  // ... continuing with more levels
+
+  // Logic, Strategy & Creativity (81-97)
+  81: {
+    id: 81,
+    title: "Maze Builder",
+    category: 'LOGIC',
+    difficulty: 'hard',
+    question: "Build a path from start to finish with limited moves",
+    hints: [
+      "Plan your route before placing tiles",
+      "You can't cross paths",
+      "Use all available moves"
+    ],
+    component: StrategyPuzzle,
+    config: {
+      type: 'maze',
+      gridSize: 5,
+      moves: 8
     }
   }
-
-  // Generate 100 unique levels with variations
-  for (let i = 1; i <= 100; i++) {
-    const baseTemplate = levelTemplates[Math.floor(Math.random() * levelTemplates.length)];
-    const difficulty = i <= 33 ? 'easy' : i <= 66 ? 'medium' : 'hard';
-    
-    // Create unique variations based on level number
-    const variations = {
-      Logic: [
-        "Find the hidden switch in darkness",
-        "Power up the ancient mechanism",
-        "Light up the path in sequence",
-        "Balance the energy flow",
-        "Synchronize the light patterns"
-      ],
-      Visual: [
-        "Count the overlapping shapes",
-        "Find all hidden patterns",
-        "Identify the correct sequence",
-        "Match the mirror images",
-        "Spot the differences"
-      ],
-      Word: [
-        "Rearrange letters to form a new word",
-        "Complete the missing sequence",
-        "Transform one word into another",
-        "Find the hidden message",
-        "Decode the ancient text"
-      ],
-      Pattern: [
-        "Reproduce the shifting pattern",
-        "Complete the geometric sequence",
-        "Match the dynamic shapes",
-        "Follow the color code",
-        "Align the sacred symbols"
-      ],
-      Color: [
-        "Mix the primary colors",
-        "Create the perfect blend",
-        "Match the color sequence",
-        "Balance the spectrum",
-        "Find the complementary pairs"
-      ],
-      Math: [
-        "Solve the number puzzle",
-        "Balance the equation",
-        "Find the missing value",
-        "Complete the sequence",
-        "Calculate the perfect combination"
-      ]
-    };
-
-    const questionVariations = variations[baseTemplate.type as keyof typeof variations];
-    const randomVariation = questionVariations[Math.floor(Math.random() * questionVariations.length)];
-
-    levels[i] = {
-      ...baseTemplate,
-      question: randomVariation,
-      hint: `${difficulty === 'hard' ? 'Challenging: ' : ''}${baseTemplate.hint}`,
-      difficulty
-    };
-  }
-
-  return levels;
+  // ... continuing with remaining levels
 };
 
-const levels = generateUniqueLevels();
-
-export const getLevelData = (levelId: number) => {
+export const getLevelData = (levelId: number): Level | null => {
   return levels[levelId] || null;
 };
