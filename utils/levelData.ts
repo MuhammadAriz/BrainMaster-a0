@@ -21,24 +21,18 @@ export interface Level {
   config?: any;
 }
 
-const levels: Record<number, Level> = {
-  // Math & Logic (1-20)
-  1: {
+export const levels: Record<number, Level> = {
+  // Math & Logic (1-20)  1: {
     id: 1,
     title: "Odd One Out",
-    category: 'MATH',
+    category: 'LOGIC',
     difficulty: 'easy',
-    question: "Which number doesn't belong in the sequence: 2, 4, 7, 8, 10?",
-    hints: [
-      "Look for a pattern in the numbers",
-      "Most numbers follow a specific rule",
-      "One number breaks the even pattern"
-    ],
-    component: MathPuzzle,
+    question: "Find the number that doesn't follow the pattern: 3, 5, 7, 9",
+    hint: "Look at how the numbers increase",
+    component: LogicPuzzle,
     config: {
-      type: 'sequence',
-      numbers: [2, 4, 7, 8, 10],
-      answer: 7
+      numbers: [3, 5, 7, 9],
+      answer: 5
     }
   },
   // ... continuing with more levels
