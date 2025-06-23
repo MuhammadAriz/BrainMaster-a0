@@ -14,8 +14,35 @@ interface PuzzleLevelProps {
   onComplete: () => void;
   onSkip: () => void;
   onGoHome: () => void;
+  onNextLevel: () => void;
+  onWatchAd: () => void;
+  onExit: () => void;
   children: React.ReactNode;
 }
+
+// Motivational messages for level completion
+const motivationalMessages = [
+  "Your brain just got a little wrinklier! 🧠",
+  "Einstein would be mildly impressed! 👨‍🔬",
+  "You're smarter than 99% of smartphones! 📱",
+  "Your IQ just went up by 0.01 points! 📈",
+  "Congratulations! You've outsmarted a puzzle designed for humans! 🎉",
+  "Your brain cells are high-fiving each other right now! 🙌",
+  "That was the easiest level... just kidding! 😉",
+  "You've unlocked: Basic Problem Solving! ✨",
+  "Neurons: activated. Coffee: still needed. ☕",
+  "You solved it faster than a quantum computer! Well, not really, but good job! 💻",
+  "Your brain just did a little happy dance! 💃",
+  "Achievement unlocked: Used more than 2% of your brain! 🧠",
+  "Logic: 1, Confusion: 0! 🏆",
+  "You're officially smarter than yesterday's you! 📆",
+  "That puzzle didn't stand a chance against your mighty brain cells! 💪",
+  "If puzzles could feel, this one would be embarrassed! 😳",
+  "Your problem-solving skills are almost as good as your pizza-ordering skills! 🍕",
+  "You're on fire! Not literally, that would be concerning. 🔥",
+  "Puzzle: defeated. Snack time: activated. 🍪",
+  "You make puzzle-solving look easy! (It's not, we checked) 👌"
+];
 
 export const PuzzleLevel: React.FC<PuzzleLevelProps> = ({
   level,
@@ -25,17 +52,40 @@ export const PuzzleLevel: React.FC<PuzzleLevelProps> = ({
   onComplete,
   onSkip,
   onGoHome,
+  onNextLevel,
+  onWatchAd,
+  onExit,
   children
-}) => {  const [bulbs, setBulbs] = useState(5); // Start with 5 bulbs  const [bulbs, setBulbs] = useState(5);
+}) => {
+  const [bulbs, setBulbs] = useState(5); // Start with 5 bulbs
   const [showHint, setShowHint] = useState(false);
   const [currentHintIndex, setCurrentHintIndex] = useState(0);
   const [hintUsed, setHintUsed] = useState(false);
+  const [showCompletionScreen, setShowCompletionScreen] = useState(false);
+  const [motivationalMessage, setMotivationalMessage] = useState('');
 
   useEffect(() => {
     AsyncStorage.getItem('bulbs').then(stored => {
       if (stored) setBulbs(parseInt(stored));
     });
   }, []);
+
+  // Reset state when level changes
+  useEffect(() => {
+    setShowCompletionScreen(false);
+    setHintUsed(false);
+    setShowHint(false);
+    setCurrentHintIndex(0);
+  }, [level]);
+
+  useEffect(() => {
+    if (isComplete && !showCompletionScreen) {
+      // Select a random motivational message
+      const randomIndex = Math.floor(Math.random() * motivationalMessages.length);
+      setMotivationalMessage(motivationalMessages[randomIndex]);
+      setShowCompletionScreen(true);
+    }
+  }, [isComplete]);
 
   const saveBulbs = async (count: number) => {
     await AsyncStorage.setItem('bulbs', count.toString());
@@ -44,7 +94,7 @@ export const PuzzleLevel: React.FC<PuzzleLevelProps> = ({
 
   const handleHintPress = () => {
     if (bulbs > 0) {
-      setBulbs(prev => prev - 1);
+      saveBulbs(bulbs - 1);
       setShowHint(true);
       setHintUsed(true);
       setCurrentHintIndex(prev => prev + 1);
@@ -55,12 +105,26 @@ export const PuzzleLevel: React.FC<PuzzleLevelProps> = ({
 
   const handleSkip = () => {
     if (bulbs >= 3) {
-      setBulbs(prev => prev - 3);
+      saveBulbs(bulbs - 3);
       onSkip();
     } else {
       toast.error('Need 3 bulbs to skip! Complete more levels to earn bulbs.');
     }
-  };  return (
+  };
+
+  const handleWatchAd = () => {
+    // Add bulbs as reward for watching ad
+    saveBulbs(bulbs + 2);
+    toast.success('Thanks for watching! +2 bulbs added');
+    onWatchAd();
+  };
+
+  const handleNextLevel = () => {
+    setShowCompletionScreen(false);
+    onNextLevel();
+  };
+
+  return (
     <View style={styles.container}>
       <View style={styles.header}>
         <View style={styles.headerLeft}>
@@ -74,6 +138,10 @@ export const PuzzleLevel: React.FC<PuzzleLevelProps> = ({
           <Text style={styles.levelText}>Level {level}</Text>
         </View>
         <View style={styles.headerRight}>
+          <View style={styles.bulbContainer}>
+            <MaterialCommunityIcons name="lightbulb" size={18} color="#FFD700" />
+            <Text style={styles.bulbCount}>{bulbs}</Text>
+          </View>
           <Pressable 
             onPress={handleHintPress} 
             style={styles.iconButton}
@@ -82,11 +150,18 @@ export const PuzzleLevel: React.FC<PuzzleLevelProps> = ({
             <MaterialCommunityIcons name="lightbulb-outline" size={24} color="#FFD700" />
           </Pressable>
           <Pressable 
-            onPress={onSkip} 
+            onPress={handleSkip} 
             style={styles.iconButton}
             accessibilityLabel="Skip level"
           >
             <MaterialCommunityIcons name="skip-next" size={24} color="#fff" />
+          </Pressable>
+          <Pressable 
+            onPress={onExit} 
+            style={styles.iconButton}
+            accessibilityLabel="Exit game"
+          >
+            <MaterialCommunityIcons name="exit-to-app" size={24} color="#fff" />
           </Pressable>
         </View>
       </View>
@@ -112,15 +187,49 @@ export const PuzzleLevel: React.FC<PuzzleLevelProps> = ({
         </Animated.View>
       )}
 
-      {isComplete && (
+      {showCompletionScreen && (
         <Animated.View 
           entering={FadeIn}
-          style={styles.completeBanner}
+          exiting={FadeOut}
+          style={styles.completionScreen}
         >
-          <Text style={styles.completeText}>Great job! 🎉</Text>
-          {!hintUsed && (
-            <Text style={styles.bonusText}>+Bonus: No hint used!</Text>
-          )}
+          <BlurView intensity={90} style={styles.completionBlur}>
+            <Text style={styles.completionTitle}>Level Complete! 🎉</Text>
+            <Text style={styles.motivationalMessage}>{motivationalMessage}</Text>
+            
+            {!hintUsed && (
+              <View style={styles.bonusContainer}>
+                <MaterialCommunityIcons name="star" size={24} color="#FFD700" />
+                <Text style={styles.bonusText}>+Bonus: No hint used! +1 bulb</Text>
+              </View>
+            )}
+            
+            <View style={styles.buttonContainer}>
+              <Pressable 
+                style={[styles.actionButton, styles.nextButton]} 
+                onPress={handleNextLevel}
+              >
+                <Text style={styles.buttonText}>Next Level</Text>
+                <MaterialCommunityIcons name="arrow-right" size={20} color="#fff" />
+              </Pressable>
+              
+              <Pressable 
+                style={[styles.actionButton, styles.adButton]} 
+                onPress={handleWatchAd}
+              >
+                <Text style={styles.buttonText}>Watch Ad (+2 bulbs)</Text>
+                <MaterialCommunityIcons name="video" size={20} color="#fff" />
+              </Pressable>
+              
+              <Pressable 
+                style={[styles.actionButton, styles.exitButton]} 
+                onPress={onExit}
+              >
+                <Text style={styles.buttonText}>Exit</Text>
+                <MaterialCommunityIcons name="exit-to-app" size={20} color="#fff" />
+              </Pressable>
+            </View>
+          </BlurView>
         </Animated.View>
       )}
     </View>
@@ -132,7 +241,8 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#1a1a1a',
     padding: 20,
-  },  header: {
+  },
+  header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
@@ -156,8 +266,18 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#fff',
   },
-  hintButton: {
-    padding: 10,
+  bulbContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'rgba(255, 215, 0, 0.2)',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 12,
+    gap: 5,
+  },
+  bulbCount: {
+    color: '#FFD700',
+    fontWeight: 'bold',
   },
   question: {
     fontSize: 20,
@@ -180,6 +300,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     padding: 20,
+    zIndex: 10,
   },
   hintBlur: {
     padding: 20,
@@ -217,5 +338,73 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 16,
     marginTop: 5,
+  },
+  completionScreen: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+    zIndex: 20,
+  },
+  completionBlur: {
+    padding: 30,
+    borderRadius: 20,
+    width: '95%',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  completionTitle: {
+    fontSize: 32,
+    fontWeight: 'bold',
+    color: '#fff',
+    marginBottom: 15,
+    textAlign: 'center',
+  },
+  motivationalMessage: {
+    fontSize: 20,
+    color: '#fff',
+    textAlign: 'center',
+    marginBottom: 25,
+    fontStyle: 'italic',
+  },
+  bonusContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'rgba(255, 215, 0, 0.2)',
+    paddingHorizontal: 15,
+    paddingVertical: 10,
+    borderRadius: 15,
+    marginBottom: 25,
+    gap: 10,
+  },
+  buttonContainer: {
+    width: '100%',
+    gap: 15,
+  },
+  actionButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 15,
+    borderRadius: 12,
+    gap: 10,
+  },
+  nextButton: {
+    backgroundColor: '#4CAF50',
+  },
+  adButton: {
+    backgroundColor: '#2196F3',
+  },
+  exitButton: {
+    backgroundColor: '#757575',
+  },
+  buttonText: {
+    color: '#fff',
+    fontSize: 18,
+    fontWeight: 'bold',
   },
 });

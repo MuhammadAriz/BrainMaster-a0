@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, Pressable } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { toast } from 'sonner-native';
+import Animated, { FadeIn } from 'react-native-reanimated';
 
 interface LogicPuzzleProps {
   onComplete: () => void;
@@ -9,46 +10,77 @@ interface LogicPuzzleProps {
 }
 
 export const LogicPuzzle: React.FC<LogicPuzzleProps> = ({ onComplete, config }) => {
-  const [selected, setSelected] = useState<number[]>([]);
+  const [selected, setSelected] = useState<number | null>(null);
 
-  const options = [
-    { id: 1, value: 3 },
-    { id: 2, value: 5 },
-    { id: 3, value: 7 },
-    { id: 4, value: 9 }
+  // Default grid of items (can be overridden by config)
+  const items = config?.items || [
+    { id: 1, shape: 'circle', color: '#FF5252' },
+    { id: 2, shape: 'circle', color: '#FF5252' },
+    { id: 3, shape: 'circle', color: '#FF5252' },
+    { id: 4, shape: 'square', color: '#FF5252' }, // This is the odd one
+    { id: 5, shape: 'circle', color: '#FF5252' },
+    { id: 6, shape: 'circle', color: '#FF5252' },
+    { id: 7, shape: 'circle', color: '#FF5252' },
+    { id: 8, shape: 'circle', color: '#FF5252' },
+    { id: 9, shape: 'circle', color: '#FF5252' }
   ];
 
-  const handleSelect = (id: number) => {
-    if (selected.includes(id)) {
-      setSelected(selected.filter(item => item !== id));
-    } else {
-      setSelected([...selected, id]);
-    }
+  const correctAnswer = config?.answer || 4; // Default to item 4 (the square)
 
-    // Check if the correct items are selected
-    if (id === 2) {
-      onComplete();
+  const handleSelect = (id: number) => {
+    setSelected(id);
+    
+    if (id === correctAnswer) {
+      toast.success('Correct!');
+      setTimeout(() => {
+        onComplete();
+      }, 1000);
+    } else {
+      toast.error('Try again!');
+      setTimeout(() => {
+        setSelected(null);
+      }, 1000);
+    }
+  };
+
+  const renderShape = (item) => {
+    if (item.shape === 'circle') {
+      return <View style={[styles.shape, { borderRadius: 25, backgroundColor: item.color }]} />;
+    } else if (item.shape === 'square') {
+      return <View style={[styles.shape, { backgroundColor: item.color }]} />;
+    } else if (item.shape === 'triangle') {
+      return (
+        <View style={styles.triangleContainer}>
+          <View style={[styles.triangle, { borderBottomColor: item.color }]} />
+        </View>
+      );
+    } else {
+      // Default to circle
+      return <View style={[styles.shape, { borderRadius: 25, backgroundColor: item.color }]} />;
     }
   };
 
   return (
-    <View style={styles.container}>
+    <Animated.View 
+      entering={FadeIn}
+      style={styles.container}
+    >
       <Text style={styles.instruction}>Find the odd one out:</Text>
       <View style={styles.grid}>
-        {options.map((option) => (
+        {items.map((item) => (
           <Pressable
-            key={option.id}
+            key={item.id}
             style={[
-              styles.option,
-              selected.includes(option.id) && styles.selectedOption
+              styles.item,
+              selected === item.id && styles.selectedItem
             ]}
-            onPress={() => handleSelect(option.id)}
+            onPress={() => handleSelect(item.id)}
           >
-            <Text style={styles.optionText}>{option.value}</Text>
+            {renderShape(item)}
           </Pressable>
         ))}
       </View>
-    </View>
+    </Animated.View>
   );
 };
 
@@ -66,26 +98,43 @@ const styles = StyleSheet.create({
   grid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 15,
     justifyContent: 'center',
+    width: 240,
   },
-  option: {
+  item: {
     width: 70,
     height: 70,
-    backgroundColor: '#333',
-    borderRadius: 35,
+    margin: 5,
     justifyContent: 'center',
     alignItems: 'center',
+    borderRadius: 8,
+    backgroundColor: '#333',
     borderWidth: 2,
     borderColor: '#444',
   },
-  selectedOption: {
-    backgroundColor: '#4CAF50',
-    borderColor: '#fff',
+  selectedItem: {
+    borderColor: '#4CAF50',
+    backgroundColor: '#333',
   },
-  optionText: {
-    color: '#fff',
-    fontSize: 24,
-    fontWeight: 'bold',
+  shape: {
+    width: 50,
+    height: 50,
   },
+  triangleContainer: {
+    width: 50,
+    height: 50,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  triangle: {
+    width: 0,
+    height: 0,
+    backgroundColor: 'transparent',
+    borderStyle: 'solid',
+    borderLeftWidth: 25,
+    borderRightWidth: 25,
+    borderBottomWidth: 50,
+    borderLeftColor: 'transparent',
+    borderRightColor: 'transparent',
+  }
 });
