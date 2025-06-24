@@ -16,6 +16,8 @@ export default function GameLevelScreen() {
   useEffect(() => {
     const levelInfo = getLevelData(levelId);
     setLevelData(levelInfo);
+    // Reset completion state when level changes
+    setIsComplete(false);
 
     const backHandler = BackHandler.addEventListener(
       'hardwareBackPress',
@@ -51,11 +53,6 @@ export default function GameLevelScreen() {
       
       // Show success message
       toast.success('Level completed! +1 bulb bonus');
-      
-      // Navigate to next level after a delay
-      setTimeout(() => {
-        navigation.navigate('LevelSelect');
-      }, 2000);
     } catch (error) {
       console.error('Error saving progress:', error);
     }
@@ -69,6 +66,31 @@ export default function GameLevelScreen() {
 
   const handleGoHome = () => {
     navigation.navigate('Home');
+  };
+
+  const handleExit = () => {
+    navigation.navigate('Home');
+  };
+
+  const handleNextLevel = () => {
+    // Navigate to the next level
+    const nextLevelId = levelId + 1;
+    const nextLevelData = getLevelData(nextLevelId);
+    
+    if (nextLevelData) {
+      // If next level exists, navigate to it
+      navigation.navigate('GameLevel', { levelId: nextLevelId });
+    } else {
+      // If this was the last level, go to level select
+      toast.success('You completed all available levels!');
+      navigation.navigate('LevelSelect');
+    }
+  };
+
+  const handleWatchAd = () => {
+    // Simulate watching an ad
+    toast.success('Thanks for watching an ad! +2 bulbs');
+    // The actual bulb reward is handled in the PuzzleLevel component
   };
 
   const handleLevelProgress = async (stars) => {
@@ -101,6 +123,9 @@ export default function GameLevelScreen() {
         onComplete={handleLevelComplete}
         onSkip={handleSkip}
         onGoHome={handleGoHome}
+        onNextLevel={handleNextLevel}
+        onWatchAd={handleWatchAd}
+        onExit={handleExit}
       >
         {React.createElement(levelData.component, {
           onComplete: handleLevelComplete,

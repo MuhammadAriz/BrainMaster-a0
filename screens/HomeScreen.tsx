@@ -1,11 +1,22 @@
 import React from 'react';
-import { View, Text, StyleSheet, Pressable, Image } from 'react-native';
+import { View, Text, StyleSheet, Pressable, Image, BackHandler, Platform } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import Animated, { FadeIn } from 'react-native-reanimated';
+import { toast } from 'sonner-native';
 
 export default function HomeScreen() {
   const navigation = useNavigation();
+
+  const handleExit = () => {
+    if (Platform.OS === 'web') {
+      // For web, we can't actually exit the app, so we'll just show a message
+      toast.info("Thanks for playing Brain Master!");
+    } else {
+      // For native platforms, we can exit the app
+      BackHandler.exitApp();
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -18,13 +29,23 @@ export default function HomeScreen() {
           style={styles.logo}
         />
 
-        <Pressable 
-          style={styles.playButton}
-          onPress={() => navigation.navigate('LevelSelect')}
-        >
-          <Text style={styles.playButtonText}>Play</Text>
-          <MaterialCommunityIcons name="play" size={24} color="#fff" />
-        </Pressable>
+        <View style={styles.buttonContainer}>
+          <Pressable 
+            style={styles.playButton}
+            onPress={() => navigation.navigate('LevelSelect')}
+          >
+            <Text style={styles.playButtonText}>Play</Text>
+            <MaterialCommunityIcons name="play" size={24} color="#fff" />
+          </Pressable>
+          
+          <Pressable 
+            style={styles.exitButton}
+            onPress={handleExit}
+          >
+            <Text style={styles.exitButtonText}>Exit</Text>
+            <MaterialCommunityIcons name="exit-to-app" size={24} color="#fff" />
+          </Pressable>
+        </View>
       </Animated.View>
     </View>
   );
@@ -58,6 +79,10 @@ const styles = StyleSheet.create({
     marginBottom: 40,
     borderRadius: 100,
   },
+  buttonContainer: {
+    gap: 15,
+    alignItems: 'center',
+  },
   playButton: {
     flexDirection: 'row',
     backgroundColor: '#4CAF50',
@@ -68,6 +93,20 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   playButtonText: {
+    color: '#fff',
+    fontSize: 24,
+    fontWeight: 'bold',
+  },
+  exitButton: {
+    flexDirection: 'row',
+    backgroundColor: '#757575',
+    paddingHorizontal: 40,
+    paddingVertical: 15,
+    borderRadius: 25,
+    alignItems: 'center',
+    gap: 10,
+  },
+  exitButtonText: {
     color: '#fff',
     fontSize: 24,
     fontWeight: 'bold',
