@@ -115,10 +115,19 @@ export const MathPuzzle: React.FC<MathPuzzleProps> = ({ onComplete, config }) =>
   };
   
   // Handle operator selection
-  const handleOperatorPress = (op: string, index: number) => {
-    if (index * 2 - 1 >= 0 && index * 2 - 1 < equation.length) {
+  const handleOperatorPress = (op: string) => {
+    // Find all operator positions in the equation
+    const operatorPositions = equation.reduce((positions, item, index) => {
+      if (typeof item === 'string') positions.push(index);
+      return positions;
+    }, [] as number[]);
+    
+    // Show a menu of operator positions or allow selecting the last one
+    if (operatorPositions.length > 0) {
+      // For simplicity, we'll just change the last operator
+      const lastOpIndex = operatorPositions[operatorPositions.length - 1];
       const newEquation = [...equation];
-      newEquation[index * 2 - 1] = op;
+      newEquation[lastOpIndex] = op;
       setEquation(newEquation);
     }
   };
@@ -188,18 +197,7 @@ export const MathPuzzle: React.FC<MathPuzzleProps> = ({ onComplete, config }) =>
           <Pressable
             key={op}
             style={styles.operatorButton}
-            onPress={() => {
-              // Find the last operator position in the equation
-              const lastOpIndex = equation.findIndex((item, i) => 
-                typeof item === 'string' && i > 0 && i < equation.length - 1
-              );
-              
-              if (lastOpIndex !== -1) {
-                const newEquation = [...equation];
-                newEquation[lastOpIndex] = op;
-                setEquation(newEquation);
-              }
-            }}
+            onPress={() => handleOperatorPress(op)}
           >
             <Text style={styles.operatorText}>{op}</Text>
           </Pressable>

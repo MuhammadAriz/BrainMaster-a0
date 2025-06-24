@@ -79,13 +79,14 @@ const levels: Record<number, Level> = {
   },
 
   // Pattern Recognition (6-10)
+  // Level 6 - Color Sequence Puzzle
   6: {
     id: 6,
-    title: "Color Sequence",
+    title: "Color Coded",
     category: 'LOGIC',
     difficulty: 'easy',
-    question: "Repeat the color pattern shown",
-    hint: "Pay attention to the order of colors!",
+    question: "Repeat the sequence of blinking colors in the correct order",
+    hint: "Pay attention to the order of colors! The sequence will get longer as you progress.",
     component: ColorPuzzle,
     config: {
       sequence: ['red', 'blue', 'yellow']
@@ -199,19 +200,18 @@ const levels: Record<number, Level> = {
     chain: ['COLD', 'CORD', 'WORD', 'WORM', 'WARM']
   }
 },
-
-  // Level 15 - Math Puzzle
+  // Level 15 - Toggle Path
   15: {
     id: 15,
-    title: "Make it 10",
-    category: 'MATH',
-    difficulty: 'easy',
-    question: "Create an equation that equals 10 using the numbers provided",
-    hint: "Try combining addition and multiplication to reach the target number.",
-    component: MathPuzzle,
+    title: "Light the Way",
+    category: 'LOGIC',
+    difficulty: 'medium',
+    question: "Light up all floor tiles by stepping on each tile exactly once",
+    hint: "Plan your path carefully. You can't step on the same tile twice, and you must cover all tiles.",
+    component: PatternPuzzle,
     config: {
-      numbers: [1, 3, 4, 6],
-      target: 10
+      gridSize: 3,
+      pathType: 'toggle'
     }
   },
 
