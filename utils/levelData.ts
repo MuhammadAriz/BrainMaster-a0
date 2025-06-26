@@ -79,14 +79,13 @@ const levels: Record<number, Level> = {
   },
 
   // Pattern Recognition (6-10)
-  // Level 6 - Color Sequence Puzzle
   6: {
     id: 6,
-    title: "Color Coded",
+    title: "Color Sequence",
     category: 'LOGIC',
     difficulty: 'easy',
-    question: "Repeat the sequence of blinking colors in the correct order",
-    hint: "Pay attention to the order of colors! The sequence will get longer as you progress.",
+    question: "Repeat the color pattern shown",
+    hint: "Pay attention to the order of colors!",
     component: ColorPuzzle,
     config: {
       sequence: ['red', 'blue', 'yellow']
@@ -192,26 +191,28 @@ const levels: Record<number, Level> = {
   category: 'LOGIC',
   difficulty: 'easy',
   question: "Start with 'COLD' and end at 'WARM', changing one letter at a time.",
-  hint: "Each step must form a valid English word. Think of synonyms too!",
+  hint: "Each step must form a valid English word. Try: COLD → CORD → WORD → WORM → WARM",
   component: WordPuzzle,
   config: {
     word: 'COLD',
     target: 'WARM',
+    type: 'wordchain',
     chain: ['COLD', 'CORD', 'WORD', 'WORM', 'WARM']
   }
 },
-  // Level 15 - Toggle Path
+
+  // Level 15 - Math Puzzle
   15: {
     id: 15,
-    title: "Light the Way",
-    category: 'LOGIC',
-    difficulty: 'medium',
-    question: "Light up all floor tiles by stepping on each tile exactly once",
-    hint: "Plan your path carefully. You can't step on the same tile twice, and you must cover all tiles.",
-    component: PatternPuzzle,
+    title: "Make it 10",
+    category: 'MATH',
+    difficulty: 'easy',
+    question: "Create an equation that equals 10 using the numbers provided",
+    hint: "Try combining addition and multiplication to reach the target number.",
+    component: MathPuzzle,
     config: {
-      gridSize: 3,
-      pathType: 'toggle'
+      numbers: [1, 3, 4, 6],
+      target: 10
     }
   },
 
