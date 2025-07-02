@@ -6,6 +6,7 @@ import { MathPuzzle } from '../components/puzzles/MathPuzzle';
 import { PatternPuzzle } from '../components/puzzles/PatternPuzzle';
 import { LogicPuzzle } from '../components/puzzles/LogicPuzzle';
 import { ColorPuzzle } from '../components/puzzles/ColorPuzzle';
+import { FindObjectsPuzzle } from '../components/puzzles/FindObjectsPuzzle';
 
 export interface Level {
   id: number;
@@ -18,6 +19,7 @@ export interface Level {
   config?: any;
 }
 
+// Define levels without any external API calls or heavy computations
 const levels: Record<number, Level> = {
   // Math & Logic Puzzles (1-5)
   1: {
@@ -74,7 +76,8 @@ const levels: Record<number, Level> = {
     component: MathPuzzle,
     config: {
       numbers: [2, 3, 4, 5],
-      target: 10
+      target: 10,
+      multipleOperators: true
     }
   },
 
@@ -88,7 +91,8 @@ const levels: Record<number, Level> = {
     hint: "Pay attention to the order of colors!",
     component: ColorPuzzle,
     config: {
-      sequence: ['red', 'blue', 'yellow']
+      sequence: ['red', 'blue', 'yellow'],
+      showInitialPattern: true
     }
   },
 
@@ -101,7 +105,8 @@ const levels: Record<number, Level> = {
     hint: "The pattern follows a clockwise direction",
     component: PatternPuzzle,
     config: {
-      pattern: [0, 2, 1, 3]
+      pattern: [0, 1, 2, 3],
+      clockwise: true
     }
   },
 
@@ -115,7 +120,8 @@ const levels: Record<number, Level> = {
     component: MathPuzzle,
     config: {
       numbers: [3, 5, 7, 2],
-      target: 15
+      target: 15,
+      multipleOperators: true
     }
   },
 
@@ -142,7 +148,8 @@ const levels: Record<number, Level> = {
     hint: "The middle light needs to be activated last",
     component: LightBulbPuzzle,
     config: {
-      pattern: true
+      pattern: true,
+      smallerSize: true
     }
   },
    // Level 11 - Odd One Out
@@ -155,8 +162,8 @@ const levels: Record<number, Level> = {
   hint: "Look at the orientation of each shape closely. One of them looks flipped!",
   component: LogicPuzzle,
   config: {
-    shapes: ['⬛', '⬛', '🔺', '🔺(mirrored)'], // visual suggestion
-    answer: 3 // index of the odd/mirrored shape
+    shapes: ['⬛', '⬛', '🔺', '🔺'],
+    answer: 3
   }
 },
   // Level 12 - Light Bulb Puzzle
@@ -179,8 +186,7 @@ const levels: Record<number, Level> = {
   hint: "Count both small and larger squares formed by combining smaller ones.",
   component: CountingPuzzle,
   config: {
-    image: 'square_grid.png',
-    answer: 14 // for example
+    answer: 14
   }
 },
 
@@ -212,7 +218,8 @@ const levels: Record<number, Level> = {
     component: MathPuzzle,
     config: {
       numbers: [1, 3, 4, 6],
-      target: 10
+      target: 10,
+      multipleOperators: true
     }
   },
 
@@ -226,7 +233,8 @@ const levels: Record<number, Level> = {
     hint: "Look for alternating patterns, increasing sizes, or rotations in the sequence.",
     component: PatternPuzzle,
     config: {
-      pattern: [0, 2, 1, 3]
+      pattern: [0, 1, 2, 3],
+      clockwise: true
     }
   },
 
@@ -240,7 +248,8 @@ const levels: Record<number, Level> = {
     hint: "Pay attention to the order of colors! The sequence will get longer as you progress.",
     component: ColorPuzzle,
     config: {
-      sequence: ['red', 'blue', 'yellow']
+      sequence: ['red', 'blue', 'yellow'],
+      showInitialPattern: true
     }
   },
 
@@ -267,10 +276,9 @@ const levels: Record<number, Level> = {
     difficulty: 'medium',
     question: "Find the hidden word in the grid of letters",
     hint: "The word can be hidden horizontally, vertically, or diagonally. Look carefully!",
-    component: WordPuzzle,
+    component: FindObjectsPuzzle,
     config: {
-      type: 'wordsearch',
-      word: 'HIDDEN',
+      targetWord: 'HIDDEN',
       grid: [
         ['H', 'Q', 'W', 'E', 'R'],
         ['I', 'A', 'S', 'D', 'F'],
