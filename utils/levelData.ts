@@ -119,7 +119,7 @@ const levels: Record<number, Level> = {
     hint: "Try using both addition and multiplication",
     component: MathPuzzle,
     config: {
-      numbers: [3, 5, 7, 2],
+      numbers: [3, 5, 7, 1],
       target: 15,
       multipleOperators: true
     }
