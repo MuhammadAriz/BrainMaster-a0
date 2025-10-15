@@ -25,7 +25,7 @@ export default function HomeScreen() {
         <Text style={styles.subtitle}>Challenge Your Mind</Text>
         
         <Image 
-          source={{ uri: 'https://api.a0.dev/assets/image?text=colorful%20brain%20illustration%20modern%20minimal&aspect=1:1' }}
+          source={require("../assets/brain.png")} // Use local image
           style={styles.logo}
         />
 
